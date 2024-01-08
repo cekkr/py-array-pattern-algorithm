@@ -10,11 +10,13 @@ def generatePatternArray(dim):
 
     arr = [-1] * dim
 
+    '''
     order = []
     for n in range(0, dim):
         order.append(n)
 
     random.shuffle(order)
+    '''
 
     primaryPoint = PatternArrayPoint(arr, 1)
     status = PatternArrayStatus(dim)
@@ -26,11 +28,12 @@ def generatePatternArray(dim):
         childrenBitCount = PatternArrayBitCount(l+1)
         while childrenBitCount.next():
             index = childrenBitCount.getNumber()
+            #print(childrenBitCount.toNumber())
 
             newNum = status.get()
             if status.completed:
                 return arr
-            newNum = order[newNum]
+            #newNum = order[newNum]
             oldNum = primaryPoint.setByIndex(index, newNum)
             if oldNum == -1:
                 status.next()
@@ -47,7 +50,7 @@ def generatePatternArray(dim):
                 newNum = status.get()
                 if status.completed:
                     return arr
-                newNum = order[newNum]
+                #newNum = order[newNum]
                 oldNum = child.set(newNum)
                 if oldNum == -1:
                     status.next()
@@ -121,7 +124,7 @@ class PatternArrayPoint:
 
         focusDim = self.aDim - 1
         if parent is not None:
-            focusDim = parent.pointSize - 1
+            focusDim = parent.pointSize
 
         self.pointSize = focusDim / 2
         self.pointPos = self.pointSize
