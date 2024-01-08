@@ -7,10 +7,18 @@ def generatePatternArray(dim):
 
     primaryPoint = PatternArrayPoint(arr, 1)
 
-    bitCount = PatternArrayBitCount()
-    primaryPoint.calculate(bitCount)
+    status = PatternArrayStatus()
+    primaryPoint.calculate(status)
 
     return arr
+
+class PatternArrayStatus:
+    def __init__(self):
+        self.level = 0
+
+    def newLevel(self):
+        self.level += 1
+        self.bitCount = PatternArrayBitCount()
 
 class PatternArrayPoint:
     def __init__(self, arr, dim, parent=None, childNo=0):
@@ -36,12 +44,12 @@ class PatternArrayPoint:
 
         self.children = [self.childLeft, self.childRight]
 
-    def calculate(self, bitCount):
-        bitCount.deeper()
+    def calculate(self, status):
+        status.newLevel()
+        status.bitCount.deeper()
 
-        while not bitCount.increment():
+        while not status.bitCount.increment():
             return
-
 
 class PatternArrayBitCount:
     def __init__(self):
@@ -64,3 +72,15 @@ class PatternArrayBitCount:
                 self.bits[i] = 0
 
         return self.bits[0] > 1
+
+    def toNumber(self):
+        bit_list = self.bits
+
+        if bit_list[0] == 1:
+            bit_list = bit_list[::-1]
+
+        decimal_number = 0
+        for bit in bit_list:
+            decimal_number = decimal_number * 2 + bit
+
+        return decimal_number
