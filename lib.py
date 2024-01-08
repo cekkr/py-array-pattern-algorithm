@@ -6,20 +6,39 @@ def generatePatternArray(dim):
     arr = [-1] * dim
 
     primaryPoint = PatternArrayPoint(arr, 1)
-
     status = PatternArrayStatus()
-    primaryPoint.calculate(status)
+    for l in range(0, primaryPoint.maxLevel):
+        status.newLevel()
+
+        # Set children
+        childrenBitCount = PatternArrayBitCount(l)
+        while childrenBitCount.next():
+            index = childrenBitCount.getNumber()
+            primaryPoint.setByIndex(index, status.curNum)
+            status.next()
+            childrenBitCount.increment()
+
+        # Set point
+        while status.bitCount.next():
+            index = status.bitCount.getNumber()
+            primaryPoint.setByIndex(index, status.curNum)
+            status.next()
+            status.bitCount.increment()
 
     return arr
 
 class PatternArrayStatus:
     def __init__(self):
         self.level = 0
+        self.bitCount = PatternArrayBitCount()
         self.curNum = 0
 
     def newLevel(self):
         self.level += 1
-        self.bitCount = PatternArrayBitCount()
+        self.bitCount = PatternArrayBitCount(self.level)
+
+    def next(self):
+        self.curNum += 1
 
 class PatternArrayPoint:
     def __init__(self, arr, dim, parent=None, childNo=0):
@@ -30,9 +49,11 @@ class PatternArrayPoint:
         self.childNo = childNo
 
         if parent is None:
-            self.level = 1
+            self.level = 0
         else:
             self.level = parent.level + 1
+
+        self.maxLevel = 0
 
         self.pointSize = (self.aDim / dim) / 2
         self.pointPos = self.aDim - self.pointSize
@@ -45,10 +66,14 @@ class PatternArrayPoint:
         if self.pointSize > 1:
             self.calculateChildren()
 
-    def countChildren(self, add):
+    def countChildren(self, add, level=0):
         self.numChildren += add
+
+        if level > self.maxLevel:
+            self.maxLevel = level
+
         if self.parent is not None:
-            self.parent.countChildren(add)
+            self.parent.countChildren(add, self.level)
 
     def calculateChildren(self):
         self.childLeft = PatternArrayPoint(self.arr, self.dim + 1, self, -1)
@@ -57,27 +82,32 @@ class PatternArrayPoint:
         self.children = [self.childLeft, self.childRight]
         self.countChildren(2)
 
-    def calculate(self, status):
+    # to deprecate
+    def calculate(self):
+        status = PatternArrayStatus()
+
         status.newLevel()
         status.bitCount.deeper()
 
         while not status.bitCount.next():
             index = status.bitCount.getIndex()
             num = status.curNum + status.bitCount.toNumber()
-            self.set(index, num)
+            child = self.getChild(index)
+            child.set(num)
             status.bitCount.increment()
 
         status.curNum += (2 ** status.bitCount.nBits)
-        self.set([], status.curNum)
+        self.setByIndex([], status.curNum)
         status.curNum += 1
 
-        nextChildren = self.getNextChildren()
+        nextChildren = self.getChildrenLevel()
         if len(nextChildren) > 0:
             return
 
-    def getNextChildren(self):
+    def getChildrenLevel(self, level):
         children = []
-        bitCount = PatternArrayBitCount(self.level)
+
+        bitCount = PatternArrayBitCount(level)
         while not bitCount.next():
             child = self.getChild(bitCount.bits)
 
@@ -104,7 +134,11 @@ class PatternArrayPoint:
 
         return self.children[myI].getChild(index[1:])
 
-    def set(self, index, n):
+    def set(self, n, p=0):
+        pos = self.pointPos + (self.pointSize * p)
+        self.arr[pos] = n
+
+    def setByIndex(self, index, n):
         lenIndex = len(index)
 
         myI = 0
@@ -112,7 +146,7 @@ class PatternArrayPoint:
             myI = -1 if index[0] == 0 else 1
 
         if lenIndex > 1:
-            self.children[myI].set(index[1:], n)
+            self.children[myI].setByIndex(index[1:], n)
         else:
             pos = self.pointPos + (self.pointSize * myI)
             self.arr[pos] = n
@@ -149,14 +183,16 @@ class PatternArrayBitCount:
     def getIndex(self):
         return self.bits[::-1]
 
+    def getNumber(self):
+        bit_list = self.bits
+        if bit_list[0] == 1:
+            bit_list = bit_list[::-1]
+        return bit_list
+
     def toIndex(self):
-        bit_list = self.bits[::-1]
+        bit_list = self.getIndex()
         return bits_to_number(bit_list)
 
     def toNumber(self):
-        bit_list = self.bits
-
-        if bit_list[0] == 1:
-            bit_list = bit_list[::-1]
-
+        bit_list = self.getNumber()
         return bits_to_number(bit_list)
