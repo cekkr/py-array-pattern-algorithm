@@ -7,35 +7,46 @@ def generatePatternArray(dim):
 
     primaryPoint = PatternArrayPoint(arr, 1)
     status = PatternArrayStatus()
-    for l in range(0, primaryPoint.maxLevel):
+    for l in range(0, primaryPoint.maxLevel+2):
         status.newLevel()
+        children = primaryPoint.getChildrenLevel(l)
 
         # Set children
-        childrenBitCount = PatternArrayBitCount(l)
+        childrenBitCount = PatternArrayBitCount(l+1)
         while childrenBitCount.next():
             index = childrenBitCount.getNumber()
-            primaryPoint.setByIndex(index, status.curNum)
-            status.next()
+            print("index = ",index)
+            if primaryPoint.setByIndex(index, status.curNum):
+                status.next()
+                print("1. num: ", status.curNum)
+            else:
+                print("repeat set occours 1")
+
             childrenBitCount.increment()
 
         # Set point
-        while status.bitCount.next():
-            index = status.bitCount.getNumber()
-            primaryPoint.setByIndex(index, status.curNum)
-            status.next()
-            status.bitCount.increment()
+        levelBitCount = PatternArrayBitCount(l)
+        while levelBitCount.next():
+            index = levelBitCount.toNumber()
+            child = children[index]
+
+            if child.set(status.curNum):
+                status.next()
+                print("2. num: ", status.curNum)
+            else:
+                print("repeat set occours 2")
+
+            levelBitCount.increment()
 
     return arr
 
 class PatternArrayStatus:
     def __init__(self):
         self.level = 0
-        self.bitCount = PatternArrayBitCount()
         self.curNum = 0
 
     def newLevel(self):
         self.level += 1
-        self.bitCount = PatternArrayBitCount(self.level)
 
     def next(self):
         self.curNum += 1
@@ -55,11 +66,12 @@ class PatternArrayPoint:
 
         self.maxLevel = 0
 
-        self.pointSize = (self.aDim / dim) / 2
-        self.pointPos = self.aDim - self.pointSize
+        focusDim = self.aDim - 1
+        self.pointSize = (focusDim / dim) / 2
+        self.pointPos = focusDim - self.pointSize
 
         if self.parent is not None:
-            self.pointPos = parent.pointPos + (self.pointPos * childNo)
+            self.pointPos = parent.pointPos + (self.pointSize * childNo)
 
         self.numChildren = 0
         self.children = None
@@ -82,34 +94,13 @@ class PatternArrayPoint:
         self.children = [self.childLeft, self.childRight]
         self.countChildren(2)
 
-    # to deprecate
-    def calculate(self):
-        status = PatternArrayStatus()
-
-        status.newLevel()
-        status.bitCount.deeper()
-
-        while not status.bitCount.next():
-            index = status.bitCount.getIndex()
-            num = status.curNum + status.bitCount.toNumber()
-            child = self.getChild(index)
-            child.set(num)
-            status.bitCount.increment()
-
-        status.curNum += (2 ** status.bitCount.nBits)
-        self.setByIndex([], status.curNum)
-        status.curNum += 1
-
-        nextChildren = self.getChildrenLevel()
-        if len(nextChildren) > 0:
-            return
-
     def getChildrenLevel(self, level):
         children = []
 
         bitCount = PatternArrayBitCount(level)
-        while not bitCount.next():
-            child = self.getChild(bitCount.bits)
+        while bitCount.next():
+            index = bitCount.getIndex()
+            child = self.getChild(index)
 
             # I do that because I don't know how it can continue the algorithm...
             if child is not None:
@@ -128,28 +119,22 @@ class PatternArrayPoint:
         if self.children is None:
             return None
 
-        myI = 0
-        if lenIndex == 1:
-            myI = -1 if index[0] == 0 else 1
-
+        myI = index[0]
         return self.children[myI].getChild(index[1:])
 
     def set(self, n, p=0):
-        pos = self.pointPos + (self.pointSize * p)
-        self.arr[pos] = n
+        pos = int(self.pointPos + (self.pointSize * p))
+        if self.arr[pos] == -1:
+            self.arr[pos] = n
+            return True
+
+        return False
 
     def setByIndex(self, index, n):
-        lenIndex = len(index)
+        child = self.getChild(index[:-1])
+        myI = -1 if index[-1] == 0 else 1
+        return child.set(n, myI)
 
-        myI = 0
-        if lenIndex == 1:
-            myI = -1 if index[0] == 0 else 1
-
-        if lenIndex > 1:
-            self.children[myI].setByIndex(index[1:], n)
-        else:
-            pos = self.pointPos + (self.pointSize * myI)
-            self.arr[pos] = n
 
 def bits_to_number(bit_list):
     decimal_number = 0
@@ -161,32 +146,46 @@ class PatternArrayBitCount:
     def __init__(self, length=0):
         self.nBits = length
         self.bits = [0] * length
+        self.done = False
 
     def deeper(self):
         self.nBits += 1
         self.bits = [0] * self.nBits
 
     def increment(self):
+        if self.nBits == 0 or all(x == 1 for x in self.bits):
+            self.done = True
+            return
+
         self.bits[self.nBits-1] += 1
 
         acc = 0
         for i in range(self.nBits-1, -1, -1):
             self.bits[i] += acc
+            acc = 0
 
             if self.bits[i] > 1:
                 acc = 1
                 self.bits[i] = 0
 
+        return self.bits
+
     def next(self):
-        return self.bits[0] > 1
+        return not self.done
 
     def getIndex(self):
         return self.bits[::-1]
 
     def getNumber(self):
-        bit_list = self.bits
+        if self.nBits == 0:
+            return []
+
+        bit_list = self.bits[:]
+
         if bit_list[0] == 1:
-            bit_list = bit_list[::-1]
+            for i in range(1, self.nBits):
+                bit_list[i] = 1 if bit_list[i] == 0 else 0
+
         return bit_list
 
     def toIndex(self):
