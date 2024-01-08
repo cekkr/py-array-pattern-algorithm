@@ -21,7 +21,6 @@ def generatePatternArray(dim):
     primaryPoint = PatternArrayPoint(arr, 1)
     status = PatternArrayStatus(dim)
     for l in range(0, primaryPoint.maxLevel+2):
-        status.newLevel()
         children = primaryPoint.getChildrenLevel(l)
 
         # Set children
@@ -34,6 +33,7 @@ def generatePatternArray(dim):
             if status.completed:
                 return arr
             #newNum = order[newNum]
+
             oldNum = primaryPoint.setByIndex(index, newNum)
             if oldNum == -1:
                 status.next()
@@ -51,6 +51,7 @@ def generatePatternArray(dim):
                 if status.completed:
                     return arr
                 #newNum = order[newNum]
+
                 oldNum = child.set(newNum)
                 if oldNum == -1:
                     status.next()
@@ -78,29 +79,15 @@ def generatePatternArray(dim):
 
 class PatternArrayStatus:
     def __init__(self, dim):
-        self.level = 0
         self.curNum = 0
-        self.recyles = []
         self.dim = dim
         self.completed = False
 
-    def newLevel(self):
-        self.level += 1
-
     def next(self):
-        if len(self.recyles) > 0:
-            self.recyles.pop(0)
-        else:
-            self.curNum += 1
-    def recycle(self, num):
-        self.recyles.append(num)
+        self.curNum += 1
 
     def get(self):
-        res = -1
-        if len(self.recyles) > 0:
-            res = self.recyles[-1]
-        else:
-            res = self.curNum
+        res = self.curNum
 
         if res >= self.dim:
             self.completed = True
