@@ -37,9 +37,30 @@ class PatternArrayPoint:
         self.children = [self.childLeft, self.childRight]
 
     def calculate(self, bitCount):
-        return
+        bitCount.deeper()
+
+        while not bitCount.increment():
+            return
 
 
 class PatternArrayBitCount:
     def __init__(self):
+        self.nBits = 0
         self.bits = []
+
+    def deeper(self):
+        self.nBits += 1
+        self.bits = [0] * self.nBits
+
+    def increment(self):
+        self.bits[self.nBits-1] += 1
+
+        acc = 0
+        for i in range(self.nBits-1, -1, -1):
+            self.bits[i] += acc
+
+            if self.bits[i] > 1:
+                acc = 1
+                self.bits[i] = 0
+
+        return self.bits[0] > 1
