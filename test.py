@@ -1,5 +1,5 @@
 # Where to test the algorithm
 from lib import *
 
-arr = generatePatternArray(9)
+arr = generatePatternArray(11)
 print("res: ", arr)

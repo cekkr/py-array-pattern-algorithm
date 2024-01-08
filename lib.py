@@ -27,7 +27,7 @@ def generatePatternArray(dim):
         # Set point
         levelBitCount = PatternArrayBitCount(l)
         while levelBitCount.next():
-            index = levelBitCount.toNumber()
+            index = levelBitCount.toIndex()
             child = children[index]
 
             if child.set(status.curNum):
@@ -67,7 +67,10 @@ class PatternArrayPoint:
         self.maxLevel = 0
 
         focusDim = self.aDim - 1
-        self.pointSize = (focusDim / dim) / 2
+        if parent is not None:
+            focusDim = parent.pointSize - 1
+
+        self.pointSize = focusDim / (2 ** dim)
         self.pointPos = focusDim - self.pointSize
 
         if self.parent is not None:
