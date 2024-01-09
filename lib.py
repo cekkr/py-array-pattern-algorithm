@@ -171,7 +171,7 @@ class PatternArrayPoint:
             self.cycle += 1
             lev = self.cycle
 
-        if lev % 2 == 0:
+        if lev % 2 == 0 and False:
             myI = 0 if myI == 1 else 1
 
         return self.children[myI].getChild(index[1:])
