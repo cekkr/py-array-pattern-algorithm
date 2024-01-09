@@ -32,6 +32,7 @@ def generatePatternArray(dim):
             newNum = status.get()
             if status.completed:
                 return arr
+
             #newNum = order[newNum]
 
             oldNum = primaryPoint.setByIndex(index, newNum)
@@ -194,7 +195,7 @@ class PatternArrayPoint:
         return oldNum
 
     def setByIndex(self, index, n):
-        child = self.getChild(index[:-1])
+        child = self.getChild(index)
 
         if child is None:
             return False

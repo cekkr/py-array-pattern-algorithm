@@ -2,13 +2,14 @@
 from lib import *
 import numpy as np
 
-if True:
+if False:
     from scipy.fft import fft, fftfreq
     import matplotlib.pyplot as plt
 
-    size = 2 ** 20
+    size = 3 ** 7
     arr = generatePatternArray(size)
     arr = getGradient(arr, size)
+    arr = [x - 0.5 for x in arr]
 
     N = size
     T = 1
@@ -19,15 +20,15 @@ if True:
     plt.grid()
     plt.show()
 
-if False:
+if True:
     # The side (and the final dimension) should be always odd
-    side = 11
+    side = 9
 
     arr = generatePatternArray(side ** 2)
     print("res: ", arr)
 
     two_dimensional_array = np.array(arr).reshape(side, side)
-    #two_dimensional_array = invertNdArrayOdds(two_dimensional_array)
+    two_dimensional_array = invertNdArrayOdds(two_dimensional_array)
     print(two_dimensional_array)
 
 if False:
