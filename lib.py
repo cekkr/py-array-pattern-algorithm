@@ -1,8 +1,6 @@
 import random
 
 def generatePatternArray(dim):
-    print("generate dim", dim)
-
     if dim == 2:
         return [0, 1]
     elif dim == 1:
@@ -58,8 +56,6 @@ def generatePatternArray(dim):
 
                 levelBitCount.increment()
 
-    return arr
-
     # Lazy solution
     unset = arr.count(-1)
     if unset > 0:
@@ -101,6 +97,8 @@ class PatternArrayPoint:
         self.dim = dim
         self.parent = parent
         self.childNo = childNo
+
+        self.cycle = 0
 
         if parent is None:
             self.level = 0
@@ -148,7 +146,7 @@ class PatternArrayPoint:
         bitCount = PatternArrayBitCount(level)
         while bitCount.next():
             index = bitCount.getNumber()
-            child = self.getChild(index)
+            child = self.getChild(index, len(children))
 
             # I do that because I don't know how it can continue the algorithm...
             if child is not None:
@@ -158,7 +156,7 @@ class PatternArrayPoint:
 
         return children
 
-    def getChild(self, index):
+    def getChild(self, index, lev=-1):
         lenIndex = len(index)
 
         if lenIndex == 0:
@@ -168,6 +166,14 @@ class PatternArrayPoint:
             return None
 
         myI = index[0]
+
+        if lev == -1:
+            self.cycle += 1
+            lev = self.cycle
+
+        if lev % 2 == 0:
+            myI = 0 if myI == 1 else 1
+
         return self.children[myI].getChild(index[1:])
 
     def set(self, n, p=0):

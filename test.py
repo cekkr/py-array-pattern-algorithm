@@ -1,7 +1,7 @@
 # Where to test the algorithm
 from lib import *
 
-arr = generatePatternArray(17**3)
+arr = generatePatternArray(1001)
 print("res: ", arr)
 
 exit(0)
