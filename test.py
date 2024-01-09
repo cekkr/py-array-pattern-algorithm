@@ -2,19 +2,25 @@
 from lib import *
 import numpy as np
 
-# The side (and the final dimension) should be always odd
-side = 11
+if False:
+    size = 2048
+    arr = generatePatternArray(size)
+    arr = getGradient(arr, size)
+    print(arr)
 
-arr = generatePatternArray(side ** 2)
-print("res: ", arr)
+if True:
+    # The side (and the final dimension) should be always odd
+    side = 11
 
-two_dimensional_array = np.array(arr).reshape(side, side)
-two_dimensional_array = invertNdArrayOdds(two_dimensional_array)
-print(two_dimensional_array)
+    arr = generatePatternArray(side ** 2)
+    print("res: ", arr)
 
-exit(0)
+    two_dimensional_array = np.array(arr).reshape(side, side)
+    #two_dimensional_array = invertNdArrayOdds(two_dimensional_array)
+    print(two_dimensional_array)
 
-for i in range(3, 1001):
-    if i%2 == 1:
-        arr = generatePatternArray(i)
-        print("res: ", arr)
+if False:
+    for i in range(3, 1001):
+        if i%2 == 1:
+            arr = generatePatternArray(i)
+            print("res: ", arr)

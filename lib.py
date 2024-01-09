@@ -23,13 +23,11 @@ def generatePatternArray(dim):
     primaryPoint = PatternArrayPoint(arr, 1)
     status = PatternArrayStatus(dim)
     for l in range(0, primaryPoint.maxLevel+2):
-        children = primaryPoint.getChildrenLevel(l)
-
         # Set children
         childrenBitCount = PatternArrayBitCount(l+1)
         while childrenBitCount.next():
             index = childrenBitCount.getNumber()
-            #print(childrenBitCount.toNumber())
+            #print(index)
 
             newNum = status.get()
             if status.completed:
@@ -43,6 +41,7 @@ def generatePatternArray(dim):
             childrenBitCount.increment()
 
         # Set point
+        children = primaryPoint.getChildrenLevel(l)
         if len(children) > 0:
             levelBitCount = PatternArrayBitCount(l)
             while levelBitCount.next():
@@ -273,4 +272,9 @@ def invertNdArrayOdds(arr):
         if count % 2 == 1:
             arr[index] = np.flip(arr[index])
 
+    return arr
+
+def getGradient(arr, dim):
+    for i in range(0, len(arr)):
+        arr[i] = arr[i]/(dim-1)
     return arr
