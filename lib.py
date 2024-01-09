@@ -1,10 +1,14 @@
 import random
+import numpy as np
 
 def generatePatternArray(dim):
     if dim == 2:
         return [0, 1]
     elif dim == 1:
         return [0]
+
+    if dim % 2 == 0:
+        print("The dimension should odd")
 
     arr = [-1] * dim
 
@@ -259,3 +263,14 @@ class PatternArrayBitCount:
     def toNumber(self):
         bit_list = self.getNumber()
         return bits_to_number(bit_list)
+
+
+def invertNdArrayOdds(arr):
+    # Determine the shape of the firsts arrays
+    firstShapes = arr.shape[:-1]
+
+    for count, index in enumerate(np.ndindex(firstShapes)):
+        if count % 2 == 1:
+            arr[index] = np.flip(arr[index])
+
+    return arr

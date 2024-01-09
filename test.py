@@ -8,6 +8,7 @@ arr = generatePatternArray(side ** 2)
 print("res: ", arr)
 
 two_dimensional_array = np.array(arr).reshape(side, side)
+two_dimensional_array = invertNdArrayOdds(two_dimensional_array)
 print(two_dimensional_array)
 
 exit(0)
