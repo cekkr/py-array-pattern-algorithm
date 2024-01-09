@@ -2,12 +2,12 @@
 from lib import *
 import numpy as np
 
-side = 7
+side = 11
 
-arr = generatePatternArray(10 ** 2)
+arr = generatePatternArray(side ** 2)
 print("res: ", arr)
 
-two_dimensional_array = np.array(arr).reshape(10, 10)
+two_dimensional_array = np.array(arr).reshape(side, side)
 print(two_dimensional_array)
 
 exit(0)
