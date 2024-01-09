@@ -270,7 +270,7 @@ def invertNdArrayOdds(arr):
     firstShapes = arr.shape[:-1]
 
     for count, index in enumerate(np.ndindex(firstShapes)):
-        if count % 2 == 1:
+        if np.sum(index) % 2 == 1:
             arr[index] = np.flip(arr[index])
 
     return arr
