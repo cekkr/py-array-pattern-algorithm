@@ -145,7 +145,7 @@ class PatternArrayPoint:
 
         bitCount = PatternArrayBitCount(level)
         while bitCount.next():
-            index = bitCount.getNumber()
+            index = bitCount.getIndex()
             child = self.getChild(index, len(children))
 
             # I do that because I don't know how it can continue the algorithm...
@@ -171,8 +171,10 @@ class PatternArrayPoint:
             self.cycle += 1
             lev = self.cycle
 
+        '''
         if lev % 2 == 0 and False:
             myI = 0 if myI == 1 else 1
+        '''
 
         return self.children[myI].getChild(index[1:])
 
