@@ -2,6 +2,7 @@
 from lib import *
 import numpy as np
 
+# The side (and the final dimension) should be always odd
 side = 11
 
 arr = generatePatternArray(side ** 2)
