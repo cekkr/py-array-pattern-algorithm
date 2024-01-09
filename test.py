@@ -6,7 +6,7 @@ if False:
     from scipy.fft import fft, fftfreq
     import matplotlib.pyplot as plt
 
-    size = 3 ** 7
+    size = 3 ** 10
     arr = generatePatternArray(size)
     arr = getGradient(arr, size)
     arr = [x - 0.5 for x in arr]
@@ -22,7 +22,7 @@ if False:
 
 if True:
     # The side (and the final dimension) should be always odd
-    side = 9
+    side = 11
 
     arr = generatePatternArray(side ** 2)
     print("res: ", arr)
