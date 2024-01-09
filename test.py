@@ -22,7 +22,7 @@ if False:
 
 if True:
     # The side (and the final dimension) should be always odd
-    side = 11
+    side = 9
 
     arr = generatePatternArray(side ** 2)
     print("res: ", arr)
