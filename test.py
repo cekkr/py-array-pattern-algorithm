@@ -22,14 +22,51 @@ if False:
 
 if True:
     # The side (and the final dimension) should be always odd
-    side = 3 ** 2
+    side = 7
 
-    arr = generatePatternArray(side ** 2)
+    size = side ** 2
+
+    arr = generatePatternArray(size)
     print("res: ", arr)
 
     two_dimensional_array = np.array(arr).reshape(side, side)
     two_dimensional_array = invertNdArrayOdds(two_dimensional_array)
     print(two_dimensional_array)
+
+    #arr = two_dimensional_array.reshape(side ** 2)
+
+    # Calculate by index
+
+    array_index = np.zeros(size)    
+    for i in range(0, size):
+        array_index[arr[i]] = i
+
+    print("")
+    print("by index:")
+    print(array_index.reshape(side, side))
+
+    # Calculate by gradient
+    array_gradient = np.zeros((size,2))
+    sideMinus = side - 1
+    for i in range(0, size):
+        val = arr[i]
+        x = (val % side)/sideMinus
+        y = round(val / sideMinus) / (sideMinus*2)
+        array_gradient[i] = [x, y]
+
+    #array_gradient = array_gradient.reshape(side, side)
+
+    print("")
+    print("by gradient:")
+    print(array_gradient)
+
+
+
+    '''
+    array_index = np.zeros(side ** 2)
+    for i in range(0, size):
+        array_index[i] = 
+    '''
 
 if False:
     for i in range(3, 1001):
